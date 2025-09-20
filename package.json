@@ -77,21 +77,18 @@
           ]
         }
       ],
-      "icon": "assets/icon.icns",
+      "icon": "icon.png",
       "category": "public.app-category.finance",
       "hardenedRuntime": false,
       "gatekeeperAssess": false,
+      "identity": null,
       "notarize": false,
       "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
-      "extendInfo": {
-        "NSAppleScriptEnabled": false,
-        "NSHighResolutionCapable": true
-      }
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "linux": {
       "target": "AppImage",
-      "icon": "assets/icon.png"
+      "icon": "icon.png"
     }
   },
   "dependencies": {
