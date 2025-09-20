@@ -199,6 +199,45 @@ Pour toute question ou problème :
 2. Consultez les logs de la console
 3. Vérifiez que toutes les dépendances sont installées
 
+## 🚀 Publication
+
+### Compilation pour la distribution
+```bash
+# Compiler pour Windows
+npm run build:win
+
+# Compiler pour macOS  
+npm run build:mac
+
+# Compiler pour Linux
+npm run build:linux
+
+# Compiler pour toutes les plateformes
+npm run build
+```
+
+### Publication automatique sur GitHub
+1. Assurez-vous que votre fichier `.env` contient votre token GitHub :
+   ```
+   GH_TOKEN=votre_token_github
+   ```
+
+2. Mettez à jour le `package.json` avec vos informations :
+   - `author` : Votre nom
+   - `build.publish.owner` : Votre nom d'utilisateur GitHub
+   - `build.publish.repo` : Nom de votre repository
+
+3. Publiez automatiquement :
+   ```bash
+   npm run publish
+   ```
+
+### Configuration requise pour la publication
+- Token GitHub avec les permissions de repository
+- Repository GitHub configuré
+- Fichier `.env` avec le token (ne pas commiter)
+- Icônes dans le dossier `assets/`
+
 ---
 
 **Version 1.0.0** - Application de suivi des dépenses personnelles
