@@ -1,0 +1,55 @@
+name: Test Mac Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-mac:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        echo "=== Dependencies installed ==="
+        
+    - name: Generate icon
+      run: |
+        npm run icon
+        echo "=== Icon generated ==="
+        ls -la icon.png
+        
+    - name: Test Mac build step by step
+      run: |
+        echo "=== Testing Mac build ==="
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        echo "Current directory: $(pwd)"
+        echo "Files in current dir:"
+        ls -la
+        
+        echo "=== Package.json build config ==="
+        node -e "console.log(JSON.stringify(require('./package.json').build.mac, null, 2))"
+        
+        echo "=== Testing electron-builder directly ==="
+        npx electron-builder --mac --publish=never --dir
+        
+        echo "=== Build completed, checking dist ==="
+        ls -la dist/ || echo "No dist directory"
+        find dist -type f -name "*" || echo "No files in dist"
+        
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mac-test-build
+        path: dist/
+        if-no-files-found: warn
