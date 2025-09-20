@@ -25,7 +25,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "votre-username",
+        "owner": "sylow",
         "repo": "app"
       }
     ],
