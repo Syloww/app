@@ -3944,3 +3944,141 @@ button, input, select, textarea {
         text-align: center;
     }
 }
+
+/* Notifications de mise à jour */
+.update-notification {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--gray-200);
+    max-width: 400px;
+    width: 100%;
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform var(--transition);
+    overflow: hidden;
+}
+
+.update-notification.show {
+    transform: translateX(0);
+}
+
+.update-notification-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+}
+
+.update-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-full);
+    background: var(--primary-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-600);
+    font-size: var(--font-size-lg);
+}
+
+.update-text {
+    flex: 1;
+}
+
+.update-text h4 {
+    color: var(--gray-900);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    margin: 0 0 var(--space-1) 0;
+}
+
+.update-text p {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+.update-actions {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.update-progress-bar {
+    height: 4px;
+    background: var(--gray-100);
+    position: relative;
+    overflow: hidden;
+}
+
+.update-progress-bar .progress-fill {
+    height: 100%;
+    background: var(--primary-500);
+    width: 0%;
+    transition: width var(--transition);
+}
+
+/* Styles pour la section des mises à jour dans les paramètres */
+.update-status {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+}
+
+.update-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.update-info i {
+    color: var(--info-color);
+    font-size: var(--font-size-lg);
+}
+
+.update-info span {
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.update-progress {
+    margin-top: var(--space-3);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: var(--border-radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-2);
+}
+
+.progress-bar .progress-fill {
+    height: 100%;
+    background: var(--primary-500);
+    width: 0%;
+    transition: width var(--transition);
+    border-radius: var(--border-radius-full);
+}
+
+.progress-bar .progress-fill.success {
+    background: var(--success-color);
+}
+
+.progress-bar .progress-fill.error {
+    background: var(--danger-color);
+}
+
+#progressText {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}

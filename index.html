@@ -529,6 +529,45 @@
                     </div>
                     
                     <div class="settings-section">
+                        <h3>Mises à jour</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="autoUpdateEnabled" checked>
+                                Vérification automatique des mises à jour
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="autoDownloadEnabled" checked>
+                                Téléchargement automatique des mises à jour
+                            </label>
+                        </div>
+                        <div class="settings-buttons">
+                            <button id="checkUpdatesBtn" class="btn btn-primary">
+                                <i class="fas fa-sync-alt"></i> Vérifier les mises à jour
+                            </button>
+                            <button id="downloadUpdateBtn" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-download"></i> Télécharger la mise à jour
+                            </button>
+                            <button id="installUpdateBtn" class="btn btn-success" style="display: none;">
+                                <i class="fas fa-install"></i> Installer maintenant
+                            </button>
+                        </div>
+                        <div id="updateStatus" class="update-status" style="display: none;">
+                            <div class="update-info">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="updateStatusText">Vérification en cours...</span>
+                            </div>
+                            <div id="updateProgress" class="update-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <span id="progressText">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
                         <h3>Thème</h3>
                         <div class="setting-item">
                             <label for="theme">Thème</label>
@@ -819,6 +858,33 @@
             <button id="closeShortcuts" class="btn btn-secondary btn-sm">
                 <i class="fas fa-times"></i> Fermer
             </button>
+        </div>
+    </div>
+
+    <!-- Notification de mise à jour -->
+    <div id="updateNotification" class="update-notification">
+        <div class="update-notification-content">
+            <div class="update-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="update-text">
+                <h4>Mise à jour disponible</h4>
+                <p id="updateNotificationText">Une nouvelle version est disponible</p>
+            </div>
+            <div class="update-actions">
+                <button id="updateNotificationDownload" class="btn btn-primary btn-sm">
+                    <i class="fas fa-download"></i> Télécharger
+                </button>
+                <button id="updateNotificationInstall" class="btn btn-success btn-sm" style="display: none;">
+                    <i class="fas fa-install"></i> Installer
+                </button>
+                <button id="updateNotificationClose" class="btn btn-outline btn-sm">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div id="updateProgressBar" class="update-progress-bar" style="display: none;">
+            <div class="progress-fill" id="updateProgressFill"></div>
         </div>
     </div>
 

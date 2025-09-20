@@ -18,7 +18,18 @@ class ExpenseTracker {
             autoSave: true,
             autoSaveInterval: 30000, // 30 secondes
             notifications: true,
-            notificationDuration: 5000 // 5 secondes
+            notificationDuration: 5000, // 5 secondes
+            autoUpdateEnabled: true,
+            autoDownloadEnabled: true
+        };
+        
+        // État des mises à jour
+        this.updateState = {
+            checking: false,
+            available: false,
+            downloading: false,
+            downloaded: false,
+            progress: 0
         };
         
         this.init();
@@ -43,6 +54,9 @@ class ExpenseTracker {
         setTimeout(() => {
             this.showNotification('Application de suivi des dépenses chargée avec succès !', 'success', 3000);
         }, 1000);
+        
+        // Initialiser les gestionnaires de mise à jour
+        this.setupUpdateHandlers();
     }
 
     // Chargement des données depuis le localStorage
@@ -77,6 +91,237 @@ class ExpenseTracker {
 
         if (savedSettings) {
             this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
+        }
+    }
+
+    // Configuration des gestionnaires de mise à jour
+    setupUpdateHandlers() {
+        // Les événements sont déjà configurés dans main.js via ipcRenderer.on
+
+        // Gestionnaires pour les boutons de mise à jour
+        const checkUpdatesBtn = document.getElementById('checkUpdatesBtn');
+        const downloadUpdateBtn = document.getElementById('downloadUpdateBtn');
+        const installUpdateBtn = document.getElementById('installUpdateBtn');
+        const updateNotificationDownload = document.getElementById('updateNotificationDownload');
+        const updateNotificationInstall = document.getElementById('updateNotificationInstall');
+        const updateNotificationClose = document.getElementById('updateNotificationClose');
+
+        if (checkUpdatesBtn) {
+            checkUpdatesBtn.addEventListener('click', () => this.checkForUpdates());
+        }
+
+        if (downloadUpdateBtn) {
+            downloadUpdateBtn.addEventListener('click', () => this.downloadUpdate());
+        }
+
+        if (installUpdateBtn) {
+            installUpdateBtn.addEventListener('click', () => this.installUpdate());
+        }
+
+        if (updateNotificationDownload) {
+            updateNotificationDownload.addEventListener('click', () => this.downloadUpdate());
+        }
+
+        if (updateNotificationInstall) {
+            updateNotificationInstall.addEventListener('click', () => this.installUpdate());
+        }
+
+        if (updateNotificationClose) {
+            updateNotificationClose.addEventListener('click', () => this.hideUpdateNotification());
+        }
+    }
+
+    // Vérifier les mises à jour
+    async checkForUpdates() {
+        if (!window.electronAPI) {
+            this.showNotification('Les mises à jour ne sont pas disponibles dans cette version', 'warning');
+            return;
+        }
+
+        try {
+            this.updateState.checking = true;
+            this.updateUpdateUI();
+            
+            const result = await window.electronAPI.checkForUpdates();
+            
+            if (result && result.updateInfo) {
+                this.handleUpdateAvailable(result.updateInfo);
+            } else {
+                this.showNotification('Aucune mise à jour disponible', 'info');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification des mises à jour:', error);
+            this.showNotification('Erreur lors de la vérification des mises à jour', 'error');
+        } finally {
+            this.updateState.checking = false;
+            this.updateUpdateUI();
+        }
+    }
+
+    // Télécharger la mise à jour
+    async downloadUpdate() {
+        if (!window.electronAPI) {
+            this.showNotification('Les mises à jour ne sont pas disponibles dans cette version', 'warning');
+            return;
+        }
+
+        try {
+            this.updateState.downloading = true;
+            this.updateUpdateUI();
+            
+            await window.electronAPI.downloadUpdate();
+        } catch (error) {
+            console.error('Erreur lors du téléchargement de la mise à jour:', error);
+            this.showNotification('Erreur lors du téléchargement de la mise à jour', 'error');
+            this.updateState.downloading = false;
+            this.updateUpdateUI();
+        }
+    }
+
+    // Installer la mise à jour
+    installUpdate() {
+        if (!window.electronAPI) {
+            this.showNotification('Les mises à jour ne sont pas disponibles dans cette version', 'warning');
+            return;
+        }
+
+        window.electronAPI.installUpdate();
+    }
+
+    // Gérer la disponibilité d'une mise à jour
+    handleUpdateAvailable(info) {
+        this.updateState.available = true;
+        this.updateState.downloaded = false;
+        this.updateUpdateUI();
+        
+        // Afficher la notification
+        this.showUpdateNotification(info);
+        
+        // Si le téléchargement automatique est activé
+        if (this.settings.autoDownloadEnabled) {
+            this.downloadUpdate();
+        }
+    }
+
+    // Gérer les erreurs de mise à jour
+    handleUpdateError(error) {
+        console.error('Erreur de mise à jour:', error);
+        this.showNotification(`Erreur de mise à jour: ${error}`, 'error');
+        this.updateState.checking = false;
+        this.updateState.downloading = false;
+        this.updateUpdateUI();
+    }
+
+    // Gérer la progression du téléchargement
+    handleDownloadProgress(progress) {
+        this.updateState.progress = Math.round(progress.percent);
+        this.updateUpdateUI();
+        this.updateUpdateNotificationProgress(progress);
+    }
+
+    // Gérer la fin du téléchargement
+    handleUpdateDownloaded(info) {
+        this.updateState.downloaded = true;
+        this.updateState.downloading = false;
+        this.updateUpdateUI();
+        
+        // Mettre à jour la notification
+        this.updateUpdateNotificationDownloaded(info);
+        
+        this.showNotification('Mise à jour téléchargée et prête à être installée', 'success');
+    }
+
+    // Afficher la notification de mise à jour
+    showUpdateNotification(info) {
+        const notification = document.getElementById('updateNotification');
+        const text = document.getElementById('updateNotificationText');
+        
+        if (notification && text) {
+            text.textContent = `Version ${info.version} disponible`;
+            notification.classList.add('show');
+        }
+    }
+
+    // Mettre à jour la notification avec la progression
+    updateUpdateNotificationProgress(progress) {
+        const progressBar = document.getElementById('updateProgressBar');
+        const progressFill = document.getElementById('updateProgressFill');
+        
+        if (progressBar && progressFill) {
+            progressBar.style.display = 'block';
+            progressFill.style.width = `${Math.round(progress.percent)}%`;
+        }
+    }
+
+    // Mettre à jour la notification quand téléchargée
+    updateUpdateNotificationDownloaded(info) {
+        const downloadBtn = document.getElementById('updateNotificationDownload');
+        const installBtn = document.getElementById('updateNotificationInstall');
+        const progressBar = document.getElementById('updateProgressBar');
+        
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        if (installBtn) installBtn.style.display = 'inline-flex';
+        if (progressBar) progressBar.style.display = 'none';
+    }
+
+    // Masquer la notification de mise à jour
+    hideUpdateNotification() {
+        const notification = document.getElementById('updateNotification');
+        if (notification) {
+            notification.classList.remove('show');
+        }
+    }
+
+    // Mettre à jour l'interface utilisateur des mises à jour
+    updateUpdateUI() {
+        const statusDiv = document.getElementById('updateStatus');
+        const statusText = document.getElementById('updateStatusText');
+        const progressDiv = document.getElementById('updateProgress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const checkBtn = document.getElementById('checkUpdatesBtn');
+        const downloadBtn = document.getElementById('downloadUpdateBtn');
+        const installBtn = document.getElementById('installUpdateBtn');
+
+        if (!statusDiv) return;
+
+        statusDiv.style.display = 'block';
+
+        if (this.updateState.checking) {
+            statusText.textContent = 'Vérification des mises à jour...';
+            checkBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+            installBtn.style.display = 'none';
+        } else if (this.updateState.available && !this.updateState.downloaded) {
+            statusText.textContent = 'Mise à jour disponible';
+            checkBtn.disabled = false;
+            downloadBtn.style.display = 'inline-flex';
+            installBtn.style.display = 'none';
+        } else if (this.updateState.downloading) {
+            statusText.textContent = 'Téléchargement en cours...';
+            checkBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+            installBtn.style.display = 'none';
+            
+            if (progressDiv) {
+                progressDiv.style.display = 'block';
+                if (progressFill) progressFill.style.width = `${this.updateState.progress}%`;
+                if (progressText) progressText.textContent = `${this.updateState.progress}%`;
+            }
+        } else if (this.updateState.downloaded) {
+            statusText.textContent = 'Mise à jour prête à être installée';
+            checkBtn.disabled = false;
+            downloadBtn.style.display = 'none';
+            installBtn.style.display = 'inline-flex';
+            
+            if (progressDiv) {
+                progressDiv.style.display = 'none';
+            }
+        } else {
+            statusDiv.style.display = 'none';
+            checkBtn.disabled = false;
+            downloadBtn.style.display = 'none';
+            installBtn.style.display = 'none';
         }
     }
 

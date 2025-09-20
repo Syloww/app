@@ -15,7 +15,13 @@
     "publish": "electron-builder --publish=always",
     "release": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")"
   },
-  "keywords": ["electron", "expenses", "budget", "finance", "desktop"],
+  "keywords": [
+    "electron",
+    "expenses",
+    "budget",
+    "finance",
+    "desktop"
+  ],
   "author": "Votre Nom",
   "license": "ISC",
   "devDependencies": {
@@ -27,7 +33,8 @@
       {
         "provider": "github",
         "owner": "Syloww",
-        "repo": "app"
+        "repo": "app",
+        "releaseType": "release"
       }
     ],
     "appId": "com.tonapp.suivis-de-depense",
@@ -57,11 +64,17 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         },
         {
           "target": "zip",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "icon": "assets/icon.icns",
@@ -75,5 +88,8 @@
       "target": "AppImage",
       "icon": "assets/icon.png"
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
   }
 }
