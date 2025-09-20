@@ -22,7 +22,13 @@
     "electron-builder": "^26.0.12"
   },
   "build": {
-    "publish": null,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Syloww",
+        "repo": "app"
+      }
+    ],
     "appId": "com.tonapp.suivis-de-depense",
     "productName": "Suivi des Dépenses",
     "directories": {
