@@ -13,13 +13,13 @@ async function generateIcon() {
       process.exit(1);
     }
 
-    // Générer PNG 256x256
+    // Générer PNG 512x512 (requis pour Mac)
     await sharp(svgPath)
-      .resize(256, 256)
+      .resize(512, 512)
       .png()
       .toFile(path.join(__dirname, '..', 'icon.png'));
 
-    console.log('✅ Icône PNG générée avec succès (256x256)');
+    console.log('✅ Icône PNG générée avec succès (512x512)');
 
     // Vérifier la taille
     const stats = fs.statSync(path.join(__dirname, '..', 'icon.png'));
