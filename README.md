@@ -40,11 +40,15 @@ Une application Electron moderne et intuitive pour suivre vos dépenses personne
 1. Allez sur la page des releases : **[https://github.com/Syloww/app/releases](https://github.com/Syloww/app/releases)**
 2. Téléchargez le fichier correspondant à votre système :
    - **Windows** : `suivis-de-depense-1.0.0.exe` (81 MB)
-   - **macOS** : `Suivi des Dépenses-1.0.0.dmg` (environ 100 MB)
+   - **macOS** : 
+     - `Suivi des Dépenses-1.0.0.dmg` (recommandé - environ 100 MB)
+     - `Suivi des Dépenses-1.0.0.zip` (alternative si DMG ne fonctionne pas)
    - **Linux** : `suivis-de-depense-1.0.0.AppImage` (environ 100 MB)
 3. Lancez l'application :
    - **Windows** : Double-cliquez sur le fichier `.exe`
-   - **macOS** : Ouvrez le fichier `.dmg` et glissez l'app dans Applications
+   - **macOS** : 
+     - **DMG** : Ouvrez le fichier `.dmg` et glissez l'app dans Applications
+     - **ZIP** : Décompressez le fichier `.zip` et double-cliquez sur l'app
    - **Linux** : Rendez le fichier `.AppImage` exécutable et double-cliquez
 
 > **Note :** Aucune installation requise, l'application se lance directement !
