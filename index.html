@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des Dépenses</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Barre de titre personnalisée -->
+        <div class="custom-titlebar">
+            <div class="titlebar-content">
+                <div class="titlebar-drag-region">
+                    <div class="app-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="app-title">Suivi des Dépenses</div>
+                </div>
+                <div class="window-controls">
+                    <button class="window-control minimize" id="minimizeBtn">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="window-control maximize" id="maximizeBtn">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="window-control close" id="closeBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Layout principal avec sidebar -->
+        <div class="main-layout">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <h1><i class="fas fa-wallet"></i> Suivi des Dépenses</h1>
+                    <div class="header-search">
+                        <div class="search-container">
+                            <input type="text" id="globalSearch" placeholder="Rechercher des transactions..." class="search-input">
+                            <button class="search-btn" onclick="app.performSearch()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Conteneur principal avec sidebar et contenu -->
+            <div class="content-wrapper">
+                <!-- Bouton menu mobile -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Overlay pour mobile -->
+                <div class="sidebar-overlay" id="sidebarOverlay"></div>
+                
+                <!-- Sidebar Navigation -->
+                <nav class="sidebar-nav" id="sidebarNav">
+                <div class="nav-items">
+                    <button class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Tableau de bord</span>
+                    </button>
+                    <button class="nav-item" data-section="add-expense">
+                        <i class="fas fa-plus"></i>
+                        <span>Ajouter dépense</span>
+                    </button>
+                    <button class="nav-item" data-section="add-income">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Ajouter revenu</span>
+                    </button>
+                    <button class="nav-item" data-section="history">
+                        <i class="fas fa-history"></i>
+                        <span>Historique</span>
+                    </button>
+                    <button class="nav-item" data-section="categories">
+                        <i class="fas fa-tags"></i>
+                        <span>Catégories</span>
+                    </button>
+                    <button class="nav-item" data-section="recurring">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Récurrents</span>
+                    </button>
+                    <button class="nav-item" data-section="calendar">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendrier</span>
+                    </button>
+                    <button class="nav-item" data-section="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Rapports</span>
+                    </button>
+                    <button class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <!-- Header avec actions rapides -->
+                <div class="dashboard-header">
+                    <div class="dashboard-title">
+                        <h2><i class="fas fa-chart-pie"></i> Tableau de bord</h2>
+                        <p>Vue d'ensemble de vos finances</p>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="app.switchSection('add-expense')">
+                            <i class="fas fa-plus"></i>
+                            <span>Dépense</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="app.switchSection('add-income')">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Revenu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Métriques principales avec design compact -->
+                <div class="metrics-grid">
+                    <div class="metric-card balance">
+                        <div class="metric-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalBalance">0,00 €</div>
+                            <div class="metric-label">Solde total</div>
+                            <div class="metric-trend" id="balanceTrend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+12%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card expenses">
+                        <div class="metric-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="monthlyExpenses">0,00 €</div>
+                            <div class="metric-label">Dépenses ce mois</div>
+                            <div class="metric-trend" id="expensesTrend">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>-5%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card income">
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="monthlyIncome">0,00 €</div>
+                            <div class="metric-label">Revenus ce mois</div>
+                            <div class="metric-trend" id="incomeTrend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+8%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card daily">
+                        <div class="metric-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="dailyExpenses">0,00 €</div>
+                            <div class="metric-label">Aujourd'hui</div>
+                            <div class="metric-subtitle">Moy: <span id="dailyAverage">0,00 €</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphiques principaux -->
+                <div class="main-charts">
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Répartition des dépenses</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn active" data-chart="pie">
+                                    <i class="fas fa-chart-pie"></i>
+                                </button>
+                                <button class="chart-btn" data-chart="doughnut">
+                                    <i class="fas fa-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Répartition des revenus</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn active" data-income-chart="pie">
+                                    <i class="fas fa-chart-pie"></i>
+                                </button>
+                                <button class="chart-btn" data-income-chart="doughnut">
+                                    <i class="fas fa-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Évolution des dépenses</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn active" data-period="30">30j</button>
+                                <button class="chart-btn" data-period="90">90j</button>
+                                <button class="chart-btn" data-period="365">1an</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section compacte des dépenses récentes -->
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> Dépenses récentes</h3>
+                        <button class="view-all-btn" onclick="app.switchSection('history')">
+                            Voir tout <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div id="recentExpensesList" class="recent-list">
+                        <!-- Les dépenses récentes seront ajoutées ici -->
+                    </div>
+                </div>
+
+                <!-- Statistiques rapides -->
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalTransactions">0</span>
+                            <span class="stat-text">Transactions</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalCategories">0</span>
+                            <span class="stat-text">Catégories</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="budgetUsed">0%</span>
+                            <span class="stat-text">Budget utilisé</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Expense Section -->
+            <section id="add-expense" class="content-section">
+                <div class="form-container">
+                    <h2>Ajouter une nouvelle dépense</h2>
+                    <form id="expenseForm" class="expense-form">
+                        <div class="form-group">
+                            <label for="expenseAmount">Montant (€)</label>
+                            <input type="number" id="expenseAmount" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseDescription">Description</label>
+                            <input type="text" id="expenseDescription" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseCategory">Catégorie</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Sélectionner une catégorie</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseDate">Date</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expensePaymentMethod">Moyen de paiement</label>
+                            <select id="expensePaymentMethod">
+                                <option value="cash">Espèces</option>
+                                <option value="card">Carte bancaire</option>
+                                <option value="transfer">Virement</option>
+                                <option value="check">Chèque</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter la dépense
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Add Income Section -->
+            <section id="add-income" class="content-section">
+                <div class="form-container">
+                    <h2>Ajouter un nouveau revenu</h2>
+                    <form id="incomeForm" class="expense-form">
+                        <div class="form-group">
+                            <label for="incomeAmount">Montant (€)</label>
+                            <input type="number" id="incomeAmount" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeDescription">Description</label>
+                            <input type="text" id="incomeDescription" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeCategory">Catégorie</label>
+                            <select id="incomeCategory" required>
+                                <option value="">Sélectionner une catégorie</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeDate">Date</label>
+                            <input type="date" id="incomeDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="incomeSource">Source</label>
+                            <select id="incomeSource">
+                                <option value="salary">Salaire</option>
+                                <option value="freelance">Freelance</option>
+                                <option value="investment">Investissement</option>
+                                <option value="gift">Cadeau</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Ajouter le revenu
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history" class="content-section">
+                <div class="history-container">
+                    <div class="section-header">
+                        <h2>Historique des transactions</h2>
+                        <div class="section-actions">
+                            <button id="exportBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                            <button id="importBtn" class="btn btn-secondary">
+                                <i class="fas fa-upload"></i> Importer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="dateFrom">Du</label>
+                            <input type="date" id="dateFrom">
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateTo">Au</label>
+                            <input type="date" id="dateTo">
+                        </div>
+                        <div class="filter-group">
+                            <label for="categoryFilter">Catégorie</label>
+                            <select id="categoryFilter">
+                                <option value="">Toutes les catégories</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="typeFilter">Type</label>
+                            <select id="typeFilter">
+                                <option value="">Tous les types</option>
+                                <option value="expense">Dépenses</option>
+                                <option value="income">Revenus</option>
+                            </select>
+                        </div>
+                        <button id="filterBtn" class="btn btn-secondary">
+                            <i class="fas fa-filter"></i> Filtrer
+                        </button>
+                        <button id="clearFiltersBtn" class="btn btn-outline">
+                            <i class="fas fa-times"></i> Effacer
+                        </button>
+                    </div>
+                    
+                    <div class="expenses-table-container">
+                        <table class="expenses-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Catégorie</th>
+                                    <th>Montant</th>
+                                    <th>Détails</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody">
+                                <!-- Les dépenses seront ajoutées ici -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories" class="content-section">
+                <div class="categories-container">
+                    <h2>Gestion des catégories</h2>
+                    
+                    <div class="add-category-form">
+                        <h3>Ajouter une catégorie</h3>
+                        <form id="categoryForm">
+                            <div class="form-group">
+                                <label for="categoryName">Nom de la catégorie</label>
+                                <input type="text" id="categoryName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoryColor">Couleur</label>
+                                <input type="color" id="categoryColor" value="#3498db">
+                            </div>
+                            <div class="form-group">
+                                <label for="categoryIcon">Icône</label>
+                                <select id="categoryIcon">
+                                    <option value="fas fa-shopping-cart">🛒 Shopping</option>
+                                    <option value="fas fa-utensils">🍽️ Nourriture</option>
+                                    <option value="fas fa-car">🚗 Transport</option>
+                                    <option value="fas fa-home">🏠 Logement</option>
+                                    <option value="fas fa-heart">❤️ Santé</option>
+                                    <option value="fas fa-gamepad">🎮 Loisirs</option>
+                                    <option value="fas fa-graduation-cap">🎓 Éducation</option>
+                                    <option value="fas fa-tshirt">👕 Vêtements</option>
+                                    <option value="fas fa-tools">🔧 Réparations</option>
+                                    <option value="fas fa-gift">🎁 Cadeaux</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="categories-list">
+                        <h3>Catégories existantes</h3>
+                        <div id="categoriesList" class="categories-grid">
+                            <!-- Les catégories seront ajoutées ici -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="settings-container">
+                    <h2>Paramètres</h2>
+                    
+                    <div class="settings-section">
+                        <h3>Général</h3>
+                        <div class="setting-item">
+                            <label for="currency">Devise</label>
+                            <select id="currency">
+                                <option value="€">Euro (€)</option>
+                                <option value="$">Dollar ($)</option>
+                                <option value="£">Livre (£)</option>
+                                <option value="¥">Yen (¥)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="dateFormat">Format de date</label>
+                            <select id="dateFormat">
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Données</h3>
+                        <div class="settings-buttons">
+                            <button id="exportDataBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                            <button id="importDataBtn" class="btn btn-secondary">
+                                <i class="fas fa-upload"></i> Importer
+                            </button>
+                            <button id="manualSaveBtn" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                            <button id="exportBackupBtn" class="btn btn-secondary">
+                                <i class="fas fa-file-export"></i> Sauvegarde complète
+                            </button>
+                            <button id="clearDataBtn" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Effacer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Thème</h3>
+                        <div class="setting-item">
+                            <label for="theme">Thème</label>
+                            <select id="theme">
+                                <option value="light">Clair</option>
+                                <option value="dark">Sombre</option>
+                                <option value="auto">Automatique</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="accentColor">Couleur d'accent</label>
+                            <select id="accentColor">
+                                <option value="blue">Bleu</option>
+                                <option value="purple">Violet</option>
+                                <option value="green">Vert</option>
+                                <option value="red">Rouge</option>
+                                <option value="orange">Orange</option>
+                                <option value="pink">Rose</option>
+                                <option value="teal">Sarcelle</option>
+                                <option value="indigo">Indigo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="notificationsEnabled" checked>
+                                Activer les notifications
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="notificationDuration">Durée des notifications (ms)</label>
+                            <input type="number" id="notificationDuration" min="1000" max="30000" step="1000" value="5000">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Recurring Transactions Section -->
+            <section id="recurring" class="content-section">
+                <div class="recurring-container">
+                    <div class="section-header">
+                        <h2><i class="fas fa-sync-alt"></i> Transactions Récurrentes</h2>
+                        <button class="btn btn-primary" onclick="app.showAddRecurringModal()">
+                            <i class="fas fa-plus"></i> Nouvelle Transaction
+                        </button>
+                    </div>
+                    
+                    <div class="recurring-list" id="recurringList">
+                        <!-- Les transactions récurrentes seront affichées ici -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="reports-container">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-bar"></i> Rapports et Analyses</h2>
+                        <div class="report-actions">
+                            <button class="btn btn-secondary" onclick="app.exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </button>
+                            <button class="btn btn-secondary" onclick="app.exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Rapport Mensuel</h3>
+                            <div id="monthlyReport" class="report-content">
+                                <!-- Rapport mensuel -->
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Analyse des Tendances</h3>
+                            <div id="trendsReport" class="report-content">
+                                <!-- Analyse des tendances -->
+                            </div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Comparaison Annuelle</h3>
+                            <div id="yearlyComparison" class="report-content">
+                                <!-- Comparaison annuelle -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Section -->
+            <section id="calendar" class="content-section">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h2><i class="fas fa-calendar-alt"></i> Calendrier des Activités</h2>
+                        <div class="calendar-controls">
+                            <div class="view-selector">
+                                <button class="view-btn active" data-view="month">
+                                    <i class="fas fa-calendar"></i> Mois
+                                </button>
+                                <button class="view-btn" data-view="week">
+                                    <i class="fas fa-calendar-week"></i> Semaine
+                                </button>
+                                <button class="view-btn" data-view="year">
+                                    <i class="fas fa-calendar"></i> Année
+                                </button>
+                            </div>
+                            <div class="calendar-navigation">
+                                <button id="prevBtn" class="nav-btn">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h3 id="currentDate">Janvier 2024</h3>
+                                <button id="nextBtn" class="nav-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <button id="todayBtn" class="btn btn-secondary">
+                                <i class="fas fa-home"></i> Aujourd'hui
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Vue Mois -->
+                    <div id="monthView" class="calendar-view active">
+                        <div class="calendar-grid">
+                            <div class="calendar-weekdays">
+                                <div class="weekday">Lun</div>
+                                <div class="weekday">Mar</div>
+                                <div class="weekday">Mer</div>
+                                <div class="weekday">Jeu</div>
+                                <div class="weekday">Ven</div>
+                                <div class="weekday">Sam</div>
+                                <div class="weekday">Dim</div>
+                            </div>
+                            <div id="calendarDays" class="calendar-days">
+                                <!-- Les jours du calendrier seront générés ici -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vue Semaine -->
+                    <div id="weekView" class="calendar-view">
+                        <div class="week-grid">
+                            <div class="week-header">
+                                <div class="time-column"></div>
+                                <div id="weekDays" class="week-days">
+                                    <!-- Les jours de la semaine seront générés ici -->
+                                </div>
+                            </div>
+                            <div class="week-body">
+                                <div class="time-slots">
+                                    <!-- Les créneaux horaires seront générés ici -->
+                                </div>
+                                <div id="weekEvents" class="week-events">
+                                    <!-- Les événements de la semaine seront générés ici -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vue Année -->
+                    <div id="yearView" class="calendar-view">
+                        <div id="yearGrid" class="year-grid">
+                            <!-- Les mois de l'année seront générés ici -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour les détails d'activité -->
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Détails de l'activité</h3>
+                <button class="modal-close" onclick="app.closeModal('activityModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Le contenu détaillé sera affiché ici -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="editActivity">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button class="btn btn-danger" id="deleteActivity">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal pour ajouter une transaction récurrente -->
+    <div id="recurringModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nouvelle Transaction Récurrente</h3>
+                <button class="modal-close" onclick="app.closeModal('recurringModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="recurringForm">
+                    <div class="form-group">
+                        <label for="recurringType">Type</label>
+                        <select id="recurringType" required>
+                            <option value="expense">Dépense</option>
+                            <option value="income">Revenu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurringDescription">Description</label>
+                        <input type="text" id="recurringDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurringAmount">Montant (€)</label>
+                        <input type="number" id="recurringAmount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurringCategory">Catégorie</label>
+                        <select id="recurringCategory" required>
+                            <option value="">Sélectionner une catégorie</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurringFrequency">Fréquence</label>
+                        <select id="recurringFrequency" required>
+                            <option value="daily">Quotidien</option>
+                            <option value="weekly">Hebdomadaire</option>
+                            <option value="monthly">Mensuel</option>
+                            <option value="yearly">Annuel</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurringStartDate">Date de début</label>
+                        <input type="date" id="recurringStartDate" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="app.closeModal('recurringModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="app.addRecurringTransaction()">Créer la Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <!-- Notification des raccourcis clavier -->
+    <div id="shortcutsNotification" class="shortcuts-notification">
+        <div class="shortcuts-content">
+            <h4><i class="fas fa-keyboard"></i> Raccourcis clavier</h4>
+            <div class="shortcuts-list">
+                <div class="shortcut-item">
+                    <kbd>Ctrl + E</kbd>
+                    <span>Ajouter une dépense</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl + I</kbd>
+                    <span>Ajouter un revenu</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl + H</kbd>
+                    <span>Voir l'historique</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl + D</kbd>
+                    <span>Tableau de bord</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Échap</kbd>
+                    <span>Retour au dashboard</span>
+                </div>
+            </div>
+            <button id="closeShortcuts" class="btn btn-secondary btn-sm">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

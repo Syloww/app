@@ -1,0 +1,38 @@
+{
+  "name": "suivis-de-depense",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^38.1.2"
+  },
+  "build": {
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
+    "appId": "com.tonapp.suivis-de-depense",
+    "productName": "Suivi des Dépenses",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
