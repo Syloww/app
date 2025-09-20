@@ -50,11 +50,20 @@ jobs:
       
     - name: Build macOS
       run: |
+        # Générer l'icône si nécessaire
+        npm run icon
+        # Build pour Mac
         npm run build:mac
         # Vérifier que les fichiers ont été créés correctement
+        echo "=== Contenu du répertoire dist ==="
         ls -la dist/
+        echo "=== Fichiers DMG ==="
+        ls -la dist/*.dmg 2>/dev/null || echo "Aucun fichier DMG trouvé"
+        echo "=== Fichiers ZIP ==="
+        ls -la dist/*.zip 2>/dev/null || echo "Aucun fichier ZIP trouvé"
         # Vérifier l'intégrité des DMG
         if ls dist/*.dmg 1> /dev/null 2>&1; then
+          echo "=== Vérification des DMG ==="
           hdiutil verify dist/*.dmg
         fi
       env:
