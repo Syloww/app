@@ -13,7 +13,8 @@
     "build:linux": "electron-builder --linux",
     "dist": "npm run build",
     "publish": "electron-builder --publish=always",
-    "release": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")"
+    "release": "node scripts/release.js",
+    "release:simple": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")"
   },
   "keywords": [
     "electron",
@@ -26,7 +27,8 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^38.1.2",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "sharp": "^0.34.4"
   },
   "build": {
     "publish": [

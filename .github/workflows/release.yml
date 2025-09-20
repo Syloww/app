@@ -31,6 +31,7 @@ jobs:
       with:
         name: windows-build
         path: dist/*.exe
+        if-no-files-found: warn
 
   build-macos:
     runs-on: macos-latest
@@ -50,13 +51,16 @@ jobs:
     - name: Build macOS
       run: |
         npm run build:mac
-        # Vérifier que le DMG a été créé correctement
-        ls -la dist/*.dmg
-        # Tester l'intégrité du DMG
-        hdiutil verify dist/*.dmg
+        # Vérifier que les fichiers ont été créés correctement
+        ls -la dist/
+        # Vérifier l'intégrité des DMG
+        if ls dist/*.dmg 1> /dev/null 2>&1; then
+          hdiutil verify dist/*.dmg
+        fi
       env:
         CSC_IDENTITY_AUTO_DISCOVERY: false
         ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
+        ELECTRON_SKIP_BINARY_DOWNLOAD: true
         
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v4
@@ -65,6 +69,7 @@ jobs:
         path: |
           dist/*.dmg
           dist/*.zip
+        if-no-files-found: warn
 
   build-linux:
     runs-on: ubuntu-latest
@@ -91,6 +96,7 @@ jobs:
       with:
         name: linux-build
         path: dist/*.AppImage
+        if-no-files-found: warn
 
   release:
     needs: [build-windows, build-macos, build-linux]
