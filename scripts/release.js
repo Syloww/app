@@ -81,7 +81,7 @@ async function main() {
   }
 
   // 5. Installer les dépendances
-  runCommand('npm ci', 'Installation des dépendances');
+  runCommand('npm install', 'Installation des dépendances');
 
   // 6. Build pour toutes les plateformes
   console.log('\n🔨 Construction des applications...');
