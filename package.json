@@ -22,13 +22,7 @@
     "electron-builder": "^26.0.12"
   },
   "build": {
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "sylow",
-        "repo": "app"
-      }
-    ],
+    "publish": null,
     "appId": "com.tonapp.suivis-de-depense",
     "productName": "Suivi des Dépenses",
     "directories": {
@@ -43,7 +37,8 @@
     ],
     "win": {
       "target": "portable",
-      "forceCodeSigning": false
+      "forceCodeSigning": false,
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,
