@@ -106,13 +106,21 @@ jobs:
         name: linux-build
         path: dist/
         
+    - name: Get version from package.json
+      id: version
+      run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ github.ref_name }}
+        name: Suivi des Dépenses v${{ steps.version.outputs.VERSION }}
         files: |
           dist/*.exe
           dist/*.dmg
           dist/*.AppImage
         generate_release_notes: true
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
