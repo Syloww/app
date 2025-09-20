@@ -74,7 +74,10 @@ async function main() {
   // 4. Nettoyer le répertoire dist
   if (fileExists('dist')) {
     console.log('🧹 Nettoyage du répertoire dist...');
-    runCommand('rm -rf dist/*', 'Nettoyage du répertoire dist');
+    // Utiliser la commande appropriée selon l'OS
+    const isWindows = process.platform === 'win32';
+    const cleanCommand = isWindows ? 'if exist dist rmdir /s /q dist && mkdir dist' : 'rm -rf dist/*';
+    runCommand(cleanCommand, 'Nettoyage du répertoire dist');
   }
 
   // 5. Installer les dépendances
