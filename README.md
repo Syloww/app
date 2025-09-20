@@ -35,16 +35,28 @@ Une application Electron moderne et intuitive pour suivre vos dépenses personne
 ## 📥 Téléchargement
 
 ### Version compilée (recommandée)
-**Téléchargez directement l'application prête à utiliser :**
+**Téléchargez directement l'application prête à utiliser pour votre système :**
 
 1. Allez sur la page des releases : **[https://github.com/Syloww/app/releases](https://github.com/Syloww/app/releases)**
-2. Téléchargez le fichier `suivis-de-depense-1.0.0.exe`
-3. Double-cliquez sur le fichier pour lancer l'application
+2. Téléchargez le fichier correspondant à votre système :
+   - **Windows** : `suivis-de-depense-1.0.0.exe` (81 MB)
+   - **macOS** : `Suivi des Dépenses-1.0.0.dmg` (environ 100 MB)
+   - **Linux** : `suivis-de-depense-1.0.0.AppImage` (environ 100 MB)
+3. Lancez l'application :
+   - **Windows** : Double-cliquez sur le fichier `.exe`
+   - **macOS** : Ouvrez le fichier `.dmg` et glissez l'app dans Applications
+   - **Linux** : Rendez le fichier `.AppImage` exécutable et double-cliquez
 
 > **Note :** Aucune installation requise, l'application se lance directement !
 
-### Lien direct de téléchargement
-**[Télécharger la dernière version](https://github.com/Syloww/app/releases/latest)**
+### Liens directs de téléchargement
+- **[Télécharger la dernière version](https://github.com/Syloww/app/releases/latest)**
+- **[Toutes les versions disponibles](https://github.com/Syloww/app/releases)**
+
+### 🖥️ Compatibilité
+- **Windows** : Windows 10/11 (64-bit)
+- **macOS** : macOS 10.14 ou plus récent
+- **Linux** : Ubuntu 18.04+ / Debian 10+ / Fedora 32+ / openSUSE 15.2+
 
 ---
 

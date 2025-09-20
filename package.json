@@ -12,7 +12,8 @@
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux",
     "dist": "npm run build",
-    "publish": "electron-builder --publish=always"
+    "publish": "electron-builder --publish=always",
+    "release": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")"
   },
   "keywords": ["electron", "expenses", "budget", "finance", "desktop"],
   "author": "Votre Nom",
