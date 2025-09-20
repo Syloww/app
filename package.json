@@ -79,10 +79,15 @@
       ],
       "icon": "assets/icon.icns",
       "category": "public.app-category.finance",
-      "hardenedRuntime": true,
+      "hardenedRuntime": false,
       "gatekeeperAssess": false,
+      "notarize": false,
       "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSAppleScriptEnabled": false,
+        "NSHighResolutionCapable": true
+      }
     },
     "linux": {
       "target": "AppImage",
