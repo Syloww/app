@@ -15,7 +15,8 @@
     "publish": "electron-builder --publish=always",
     "release": "node scripts/release.js",
     "release:simple": "git tag v$(node -p \"require('./package.json').version\") && git push origin v$(node -p \"require('./package.json').version\")",
-    "icon": "node scripts/generate-icon.js"
+    "icon": "node scripts/generate-icon.js",
+    "icon:convert": "node scripts/convert-icon.js"
   },
   "keywords": [
     "electron",
