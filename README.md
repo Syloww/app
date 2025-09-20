@@ -32,7 +32,23 @@ Une application Electron moderne et intuitive pour suivre vos dépenses personne
 - **Import de données** : restauration depuis un fichier JSON
 - **Effacement sécurisé** : suppression complète avec confirmation
 
-## 🚀 Installation et utilisation
+## 📥 Téléchargement
+
+### Version compilée (recommandée)
+**Téléchargez directement l'application prête à utiliser :**
+
+1. Allez sur la page des releases : **[https://github.com/Syloww/app/releases](https://github.com/Syloww/app/releases)**
+2. Téléchargez le fichier `suivis-de-depense-1.0.0.exe`
+3. Double-cliquez sur le fichier pour lancer l'application
+
+> **Note :** Aucune installation requise, l'application se lance directement !
+
+### Lien direct de téléchargement
+**[Télécharger la dernière version](https://github.com/Syloww/app/releases/latest)**
+
+---
+
+## 🚀 Installation et utilisation (développeurs)
 
 ### Prérequis
 - Node.js (version 14 ou supérieure)
